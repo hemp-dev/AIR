@@ -2,7 +2,7 @@
 
 AIR (Agent Intermediate Representation) is a small research runtime for coordinating LLM agents through typed operations and shared semantic state instead of repeated natural-language context transfer.
 
-> Research status: `v0.1.0-alpha.3` adds the offline deterministic benchmark harness to the executable AIR core. AIR-Text and provider-backed experiments remain separate follow-up milestones.
+> Research status: `v0.1.0-alpha.4` adds an explicitly opt-in real-model benchmark layer while keeping the deterministic harness as the offline semantic control. AIR-Text remains a separate follow-up milestone.
 
 ## Why AIR
 
@@ -16,7 +16,7 @@ The experiment is designed to compare four fair variants: `NL`, `JSON`, `SJSON` 
 
 ## Current release
 
-`v0.1.0-alpha.3` contains:
+`v0.1.0-alpha.4` contains:
 
 - Python 3.12+ package scaffold;
 - immutable validated identifiers and SSA references;
@@ -33,9 +33,10 @@ The experiment is designed to compare four fair variants: `NL`, `JSON`, `SJSON` 
 - sequential runtime execution for the core operation set, including mock agent/tool boundaries and `spawn`/`await`/`join` futures;
 - append-only structured events and deterministic operator-facing projections;
 - offline `NL`/`JSON`/`SJSON`/`AIR` benchmark modes with exact byte/context accounting, nullable token fields, deterministic scenarios, semantic-equivalence gating and JSON/Markdown reports;
+- opt-in real-model benchmark Phase 2 with one OpenAI Responses adapter, provider-reported usage normalization, paired randomized repetitions, warmups, per-call/per-agent ledgers, four scalable scenarios and JSON/Markdown reports;
 - deterministic unit, integration and adversarial tests for the model and executable core.
 
-This release does not include an AIR-Text parser/printer, provider-backed integrations, persistence, UI, AIR+OPT passes or a real-LLM benchmark.
+This release does not include an AIR-Text parser/printer, additional provider adapters, production persistence, UI or AIR+OPT passes. Live calls remain explicitly opt-in and are not part of the default test or benchmark paths.
 
 ## Quick start
 
@@ -97,6 +98,8 @@ print(serialize_program(program))
 - [`docs/CODEX_TASKS.md`](docs/CODEX_TASKS.md) — ordered implementation queue;
 - [`docs/BENCHMARK_PROTOCOL.md`](docs/BENCHMARK_PROTOCOL.md) — experimental protocol;
 - [`docs/BENCHMARKING.md`](docs/BENCHMARKING.md) — harness usage, accounting rules and first deterministic observations;
+- [`docs/LIVE_BENCHMARKING.md`](docs/LIVE_BENCHMARKING.md) — opt-in real-model Phase 2 usage and measurement limits;
+- [`docs/RELEASE_NOTES_V0_1_ALPHA_4.md`](docs/RELEASE_NOTES_V0_1_ALPHA_4.md) — current release scope and known gaps;
 - [`docs/RELEASE_NOTES_V0_1_ALPHA_1.md`](docs/RELEASE_NOTES_V0_1_ALPHA_1.md) — release scope and known gaps.
 
 ## Design invariants

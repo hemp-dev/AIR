@@ -141,3 +141,12 @@ coordination actions for selected model tokenizers, include any repeated
 schema/instruction overhead, and keep token fields marked exact only when the
 tokenizer reports an exact count. Provider-backed semantic compilation should
 follow only after the deterministic baseline is committed.
+
+## Real-model Phase 2
+
+The opt-in real-model extension is documented in
+[`LIVE_BENCHMARKING.md`](LIVE_BENCHMARKING.md). It adds one provider-neutral
+adapter boundary, paired randomized repetitions, provider-reported usage,
+separate communication/inference ledgers and four high-information scenarios.
+The deterministic suite remains the offline semantic control and is unchanged
+by live execution.

@@ -2,6 +2,33 @@
 
 All notable changes to AIR are documented here.
 
+## [0.1.0-alpha.4] — 2026-08-12
+
+Opt-in real-model benchmark Phase 2 for AIR v0.1.
+
+### Added
+
+- provider-neutral `ModelAdapter`, normalized `ModelResponse` and one
+  standard-library OpenAI Responses adapter;
+- explicit `--execute` live CLI with environment-only credentials, model,
+  timeout, retry, repetition, warmup and pricing configuration;
+- paired, seeded mode ordering and fixture hashing across NL, JSON, SJSON and
+  AIR;
+- separate communication and inference-context ledgers plus per-call and
+  per-agent attribution;
+- long-context, relay-depth, fan-out/join and adversarial-trust live scenarios;
+- provider usage normalization, nullable metrics, statistics, deltas, scale
+  series and JSON/Markdown reports;
+- offline fake-adapter and mocked-transport tests; no live provider results
+  are included in this release.
+
+### Not included yet
+
+- AIR-Text parser/printer;
+- additional real provider adapters or streaming time-to-first-token;
+- provider-controlled caching isolation, concurrency experiments, persistence,
+  UI, MCP/A2A integrations or AIR+OPT.
+
 ## [0.1.0-alpha.2] — 2026-08-12
 
 Deterministic executable-core release for Agent IR v0.1.
