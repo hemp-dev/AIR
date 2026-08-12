@@ -2,7 +2,7 @@
 
 AIR (Agent Intermediate Representation) is a small research runtime for coordinating LLM agents through typed operations and shared semantic state instead of repeated natural-language context transfer.
 
-> Research status: `v0.1.0-alpha.1` implements Milestone 0–1 — the canonical AIR model and deterministic AIR-JSON serialization. The parser, verifier, state store, runtime and benchmark harness are planned next.
+> Research status: `v0.1.0-alpha.2` implements the deterministic executable AIR core. AIR-Text and benchmark variants remain separate follow-up milestones.
 
 ## Why AIR
 
@@ -16,7 +16,7 @@ The experiment is designed to compare four fair variants: `NL`, `JSON`, `SJSON` 
 
 ## Current release
 
-`v0.1.0-alpha.1` contains:
+`v0.1.0-alpha.2` contains:
 
 - Python 3.12+ package scaffold;
 - immutable validated identifiers and SSA references;
@@ -27,9 +27,14 @@ The experiment is designed to compare four fair variants: `NL`, `JSON`, `SJSON` 
 - immutable `Operation`, `ResultDecl` and `Program` objects;
 - duplicate operation/result detection;
 - deterministic canonical AIR-JSON serialization and deserialization;
-- 24 unit and integration tests for the foundation model.
+- normalized `wm://` state references and immutable versioned `StateStore` snapshots;
+- validated patches with declared write sets, optimistic concurrency and idempotent replay;
+- a fail-closed opcode registry and structured verifier diagnostics for SSA, types, effects, capabilities, trust and HITL risk;
+- sequential runtime execution for the core operation set, including mock agent/tool boundaries and `spawn`/`await`/`join` futures;
+- append-only structured events and deterministic operator-facing projections;
+- deterministic unit, integration and adversarial tests for the model and executable core.
 
-This release does not execute programs. AIR-Text, verification, state mutation, backends, event projection and benchmarks are not part of this alpha.
+This release does not include an AIR-Text parser/printer, provider-backed integrations, persistence, UI or benchmark variants.
 
 ## Quick start
 
@@ -41,7 +46,7 @@ source .venv/bin/activate
 python -m pip install -e '.[dev]'
 ```
 
-Run the foundation checks:
+Run the validation suite:
 
 ```bash
 python -m pytest -q
@@ -76,7 +81,13 @@ print(serialize_program(program))
 ## Repository map
 
 - [`src/air/ir`](src/air/ir) — canonical AIR data model and AIR-JSON serde;
-- [`tests`](tests) — foundation tests;
+- [`src/air/verifier`](src/air/verifier) — deterministic registry and static verification;
+- [`src/air/state`](src/air/state) — immutable snapshots, projections and patch commits;
+- [`src/air/runtime`](src/air/runtime) — verified sequential execution and event collection;
+- [`src/air/backends`](src/air/backends) — provider-independent deterministic mock boundaries;
+- [`src/air/projection`](src/air/projection) — operator projection from structured events;
+- [`tests`](tests) — model, security, state and end-to-end tests;
+- [`docs/EXECUTABLE_CORE.md`](docs/EXECUTABLE_CORE.md) — executable-core lifecycle and API contract;
 - [`docs/AIR_SPEC_V0_1.md`](docs/AIR_SPEC_V0_1.md) — normative model and operation specification;
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — component boundaries and lifecycle;
 - [`docs/SECURITY_AND_VERIFICATION.md`](docs/SECURITY_AND_VERIFICATION.md) — threat model and fail-closed rules;
@@ -89,8 +100,8 @@ print(serialize_program(program))
 
 - The canonical representation is a typed data model, not AIR-Text.
 - State and coordination messages remain separate.
-- Semantic objects are immutable; updates will create new versions.
-- State writes will go through validated patches and commits.
+- Semantic objects are immutable; updates create new versions.
+- State writes go through validated patches and commits.
 - Unknown operations and effects fail closed.
 - Effects must be allowed by actor capabilities.
 - `ExternalUntrusted` cannot implicitly become `Verified`.
@@ -102,12 +113,8 @@ print(serialize_program(program))
 Implementation follows [`docs/CODEX_TASKS.md`](docs/CODEX_TASKS.md):
 
 1. AIR-Text lexer, parser and printer;
-2. deterministic opcode registry and verifier;
-3. immutable/versioned shared state store;
-4. runtime and deterministic mock backends;
-5. event-driven operator projection;
-6. offline `NL`/`JSON`/`SJSON`/`AIR` benchmark harness;
-7. deterministic benchmark scenarios and optional optimizations.
+2. offline `NL`/`JSON`/`SJSON`/`AIR` benchmark harness;
+3. deterministic benchmark scenarios and optional optimizations.
 
 Provider-backed LLMs, MCP/A2A adapters, production persistence, UI and irreversible real-world tools remain out of scope for the MVP foundation.
 

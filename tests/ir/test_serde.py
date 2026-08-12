@@ -16,6 +16,7 @@ from air.ir import (
     ResultDecl,
     SerializationError,
     SourceLocation,
+    Task,
     ValueRef,
     deserialize_program,
     serialize_program,
@@ -54,6 +55,7 @@ def build_program() -> Program:
             ["read:wm://case/**", "deny:write:wm://case/private/**"]
         ),
         metadata={"seed": 7, "fixture": {"name": "relay", "enabled": True}},
+        task=Task("task.relay", Literal("relay", "String"), {"seed": 7}),
     )
 
 
@@ -66,6 +68,15 @@ def test_program_json_round_trip_and_deterministic_bytes() -> None:
     assert serialize_program(restored) == encoded
     assert serialize_program_bytes(program) == encoded.encode("utf-8")
     assert list(json.loads(encoded)) == sorted(json.loads(encoded))
+
+
+def test_task_metadata_and_goal_survive_round_trip() -> None:
+    program = build_program()
+    restored = deserialize_program(serialize_program(program))
+
+    assert restored.task == program.task
+    assert restored.task is not None
+    assert restored.task.json_metadata() == {"seed": 7}
 
 
 def test_malformed_json_and_duplicate_keys_are_rejected() -> None:

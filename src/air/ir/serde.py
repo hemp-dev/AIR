@@ -8,10 +8,11 @@ from typing import cast
 
 from .effects import CapabilitySet, Effect
 from .errors import SerializationError
-from .ids import ActorRef, OpId, ProgramId, ResultId, ValueRef
+from .ids import ActorRef, OpId, ProgramId, ResultId, TaskId, ValueRef
 from .operations import Operation, ResultDecl, SourceLocation
 from .program import Program
 from .provenance import Provenance
+from .task import Task
 from .types import TypeDescriptor
 from .values import FrozenDict, JsonInput, JsonValue, Literal, Value, thaw_json
 
@@ -19,7 +20,7 @@ from .values import FrozenDict, JsonInput, JsonValue, Literal, Value, thaw_json
 def program_to_json_obj(program: Program) -> dict[str, object]:
     """Convert a validated program into ordinary JSON-compatible objects."""
 
-    return {
+    result: dict[str, object] = {
         "actor": str(program.actor),
         "air_version": program.air_version,
         "capabilities": program.capabilities.to_json_values(),
@@ -27,6 +28,13 @@ def program_to_json_obj(program: Program) -> dict[str, object]:
         "operations": [operation_to_json_obj(operation) for operation in program.operations],
         "program_id": str(program.program_id),
     }
+    if program.task is not None:
+        result["task"] = {
+            "goal": value_to_json_obj(program.task.goal) if program.task.goal is not None else None,
+            "metadata": program.task.json_metadata(),
+            "task_id": str(program.task.task_id),
+        }
+    return result
 
 
 def operation_to_json_obj(operation: Operation) -> dict[str, object]:
@@ -104,7 +112,7 @@ def program_from_json_obj(raw: object) -> Program:
     document = _object(raw, "program")
     _reject_unknown(
         document,
-        {"air_version", "program_id", "actor", "operations", "capabilities", "metadata"},
+        {"air_version", "program_id", "actor", "operations", "capabilities", "metadata", "task"},
         "program",
     )
     air_version = _required_string(document, "air_version", "program")
@@ -121,6 +129,7 @@ def program_from_json_obj(raw: object) -> Program:
     metadata_raw = document.get("metadata", {})
     if not isinstance(metadata_raw, dict):
         raise SerializationError("program.metadata must be an object")
+    task = _task_from_json(document.get("task"))
     try:
         return Program(
             program_id=ProgramId(program_id),
@@ -129,6 +138,7 @@ def program_from_json_obj(raw: object) -> Program:
             air_version=air_version,
             capabilities=CapabilitySet.from_strings(cast(list[str], capabilities_raw)),
             metadata=cast(Mapping[str, JsonInput], metadata_raw),
+            task=task,
         )
     except (ValueError, TypeError) as exc:
         if isinstance(exc, SerializationError):
@@ -231,6 +241,24 @@ def _source_location_from_json(raw: object) -> SourceLocation | None:
     if source is not None and not isinstance(source, str):
         raise SerializationError("source_location source must be a string or null")
     return SourceLocation(line=line, column=column, source=source)
+
+
+def _task_from_json(raw: object) -> Task | None:
+    if raw is None:
+        return None
+    document = _object(raw, "task")
+    _reject_unknown(document, {"task_id", "goal", "metadata"}, "task")
+    task_id = _required_string(document, "task_id", "task")
+    metadata = document.get("metadata", {})
+    if not isinstance(metadata, dict):
+        raise SerializationError("task.metadata must be an object")
+    goal_raw = document.get("goal")
+    goal = _value_from_json(goal_raw) if goal_raw is not None else None
+    return Task(
+        task_id=TaskId(task_id),
+        goal=goal,
+        metadata=cast(Mapping[str, JsonInput], metadata),
+    )
 
 
 def _object(raw: object, label: str) -> dict[str, object]:

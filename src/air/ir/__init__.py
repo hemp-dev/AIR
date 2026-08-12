@@ -2,10 +2,11 @@
 
 from .effects import CapabilityRule, CapabilitySet, Effect, EffectKind
 from .errors import AIRModelError, DuplicateIdError, InvalidIdentifierError, SerializationError
-from .ids import ActorRef, OpId, ProgramId, ResultId, ValueRef
+from .ids import ActorRef, OpId, PatchId, ProgramId, ResultId, TaskId, ValueId, ValueRef
 from .operations import Operation, ResultDecl, SourceLocation
 from .program import AIR_VERSION, Program
 from .provenance import Provenance, TrustLabel, trust_transition_allowed
+from .refs import StateRef, normalize_relative_path, normalize_write_scope
 from .serde import (
     deserialize_program,
     operation_from_json_obj,
@@ -16,6 +17,7 @@ from .serde import (
     serialize_program_bytes,
     value_to_json_obj,
 )
+from .task import Task
 from .types import (
     BOOL,
     BYTES,
@@ -73,6 +75,7 @@ __all__ = [
     "OpId",
     "Operation",
     "OptionalType",
+    "PatchId",
     "PrimitiveKind",
     "PrimitiveType",
     "Program",
@@ -80,6 +83,7 @@ __all__ = [
     "Provenance",
     "ResultDecl",
     "ResultId",
+    "StateRef",
     "RuntimeKind",
     "RuntimeType",
     "STRING",
@@ -88,10 +92,13 @@ __all__ = [
     "SerializationError",
     "SourceLocation",
     "TIMESTAMP",
+    "Task",
+    "TaskId",
     "TrustLabel",
     "TupleType",
     "TypeDescriptor",
     "Value",
+    "ValueId",
     "ValueInput",
     "ValueRef",
     "as_value",
@@ -100,6 +107,8 @@ __all__ = [
     "operation_from_json_obj",
     "operation_to_json_obj",
     "parse_type",
+    "normalize_relative_path",
+    "normalize_write_scope",
     "program_from_json_obj",
     "program_to_json_obj",
     "serialize_program",

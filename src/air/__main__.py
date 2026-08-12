@@ -4,7 +4,7 @@ from __future__ import annotations
 
 
 def main() -> int:
-    print("Agent IR v0.1: canonical model scaffold")
+    print("Agent IR v0.1: deterministic executable core")
     return 0
 
 

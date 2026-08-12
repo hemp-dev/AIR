@@ -46,5 +46,6 @@ def test_provenance_is_immutable_and_serializes_refs_deterministically() -> None
         "operation_id": "op1",
         "timestamp": "2025-01-02T03:04:05+00:00",
         "evidence_refs": ["wm://case/evidence#v1"],
+        "confidence": None,
     }
     assert Provenance.from_json_obj(provenance.to_json_obj()) == provenance

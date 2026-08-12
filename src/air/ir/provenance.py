@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import StrEnum
@@ -60,6 +61,7 @@ class Provenance:
     operation_id: OpId | None = None
     timestamp: datetime | None = None
     evidence_refs: tuple[str, ...] = field(default_factory=tuple)
+    confidence: float | None = None
 
     def __post_init__(self) -> None:
         normalized_sources: list[str | ValueRef] = []
@@ -80,6 +82,15 @@ class Provenance:
             object.__setattr__(self, "produced_by", ActorRef(self.produced_by))
         if self.operation_id is not None and not isinstance(self.operation_id, OpId):
             object.__setattr__(self, "operation_id", OpId(self.operation_id))
+        if self.confidence is not None:
+            if (
+                isinstance(self.confidence, bool)
+                or not isinstance(self.confidence, (int, float))
+                or not math.isfinite(self.confidence)
+                or not 0.0 <= self.confidence <= 1.0
+            ):
+                raise ValueError("provenance confidence must be a finite number between 0 and 1")
+            object.__setattr__(self, "confidence", float(self.confidence))
         object.__setattr__(self, "source_refs", tuple(normalized_sources))
         object.__setattr__(self, "evidence_refs", tuple(normalized_evidence))
 
@@ -87,7 +98,14 @@ class Provenance:
     def from_json_obj(cls, raw: object) -> Provenance:
         if not isinstance(raw, dict):
             raise ValueError("provenance must be an object")
-        allowed = {"source_refs", "produced_by", "operation_id", "timestamp", "evidence_refs"}
+        allowed = {
+            "source_refs",
+            "produced_by",
+            "operation_id",
+            "timestamp",
+            "evidence_refs",
+            "confidence",
+        }
         unknown = set(raw) - allowed
         if unknown:
             raise ValueError(f"unknown provenance fields: {sorted(unknown)!r}")
@@ -104,6 +122,11 @@ class Provenance:
             else:
                 raise ValueError(f"invalid provenance source: {source!r}")
         timestamp_raw = raw.get("timestamp")
+        confidence_raw = raw.get("confidence")
+        if confidence_raw is not None and (
+            isinstance(confidence_raw, bool) or not isinstance(confidence_raw, (int, float))
+        ):
+            raise ValueError("provenance confidence must be a number")
         timestamp = None
         if timestamp_raw is not None:
             if not isinstance(timestamp_raw, str):
@@ -120,6 +143,7 @@ class Provenance:
             operation_id=OpId(raw["operation_id"]) if raw.get("operation_id") is not None else None,
             timestamp=timestamp,
             evidence_refs=tuple(evidence_refs_raw),
+            confidence=float(confidence_raw) if confidence_raw is not None else None,
         )
 
     def to_json_obj(self) -> dict[str, object]:
@@ -135,4 +159,5 @@ class Provenance:
             "operation_id": str(self.operation_id) if self.operation_id is not None else None,
             "timestamp": self.timestamp.isoformat() if self.timestamp is not None else None,
             "evidence_refs": list(self.evidence_refs),
+            "confidence": self.confidence,
         }

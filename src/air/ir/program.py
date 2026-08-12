@@ -10,6 +10,7 @@ from .effects import CapabilitySet
 from .errors import AIRModelError, DuplicateIdError
 from .ids import ActorRef, OpId, ProgramId, ResultId
 from .operations import Operation, ResultDecl
+from .task import Task
 from .values import FrozenDict, JsonInput, JsonValue, freeze_json, thaw_json
 
 AIR_VERSION = "0.1"
@@ -31,6 +32,7 @@ class Program:
     metadata: FrozenDict[str, JsonValue] | Mapping[str, JsonInput] = field(
         default_factory=FrozenDict
     )
+    task: Task | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.program_id, ProgramId):
@@ -61,6 +63,8 @@ class Program:
         if not isinstance(frozen_metadata, FrozenDict):
             raise AIRModelError("program metadata must be a JSON object")
         object.__setattr__(self, "metadata", frozen_metadata)
+        if self.task is not None and not isinstance(self.task, Task):
+            raise AIRModelError("program task must be a Task or None")
 
     @property
     def result_declarations(self) -> tuple[ResultDecl, ...]:

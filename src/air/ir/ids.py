@@ -32,6 +32,32 @@ class ProgramId:
 
 
 @dataclass(frozen=True, slots=True)
+class TaskId:
+    """Opaque stable identifier for a logical execution task."""
+
+    value: str
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "value", _validate_name(self.value, "task id"))
+
+    def __str__(self) -> str:
+        return self.value
+
+
+@dataclass(frozen=True, slots=True)
+class PatchId:
+    """Stable identifier for one proposed state patch."""
+
+    value: str
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "value", _validate_name(self.value, "patch id"))
+
+    def __str__(self) -> str:
+        return self.value
+
+
+@dataclass(frozen=True, slots=True)
 class OpId:
     """Identifier for one operation in a program."""
 
@@ -111,3 +137,7 @@ class ValueRef:
 
     def __str__(self) -> str:
         return str(self.result_id)
+
+
+# AIR uses SSA result identifiers as its canonical value identifiers.
+ValueId = ResultId
