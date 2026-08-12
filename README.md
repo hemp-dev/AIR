@@ -2,7 +2,7 @@
 
 AIR (Agent Intermediate Representation) is a small research runtime for coordinating LLM agents through typed operations and shared semantic state instead of repeated natural-language context transfer.
 
-> Research status: `v0.1.0-alpha.2` implements the deterministic executable AIR core. AIR-Text and benchmark variants remain separate follow-up milestones.
+> Research status: `v0.1.0-alpha.3` adds the offline deterministic benchmark harness to the executable AIR core. AIR-Text and provider-backed experiments remain separate follow-up milestones.
 
 ## Why AIR
 
@@ -16,7 +16,7 @@ The experiment is designed to compare four fair variants: `NL`, `JSON`, `SJSON` 
 
 ## Current release
 
-`v0.1.0-alpha.2` contains:
+`v0.1.0-alpha.3` contains:
 
 - Python 3.12+ package scaffold;
 - immutable validated identifiers and SSA references;
@@ -32,9 +32,10 @@ The experiment is designed to compare four fair variants: `NL`, `JSON`, `SJSON` 
 - a fail-closed opcode registry and structured verifier diagnostics for SSA, types, effects, capabilities, trust and HITL risk;
 - sequential runtime execution for the core operation set, including mock agent/tool boundaries and `spawn`/`await`/`join` futures;
 - append-only structured events and deterministic operator-facing projections;
+- offline `NL`/`JSON`/`SJSON`/`AIR` benchmark modes with exact byte/context accounting, nullable token fields, deterministic scenarios, semantic-equivalence gating and JSON/Markdown reports;
 - deterministic unit, integration and adversarial tests for the model and executable core.
 
-This release does not include an AIR-Text parser/printer, provider-backed integrations, persistence, UI or benchmark variants.
+This release does not include an AIR-Text parser/printer, provider-backed integrations, persistence, UI, AIR+OPT passes or a real-LLM benchmark.
 
 ## Quick start
 
@@ -85,6 +86,7 @@ print(serialize_program(program))
 - [`src/air/state`](src/air/state) — immutable snapshots, projections and patch commits;
 - [`src/air/runtime`](src/air/runtime) — verified sequential execution and event collection;
 - [`src/air/backends`](src/air/backends) — provider-independent deterministic mock boundaries;
+- [`src/air/bench`](src/air/bench) — deterministic benchmark modes, scenarios, ledgers, metrics and reports;
 - [`src/air/projection`](src/air/projection) — operator projection from structured events;
 - [`tests`](tests) — model, security, state and end-to-end tests;
 - [`docs/EXECUTABLE_CORE.md`](docs/EXECUTABLE_CORE.md) — executable-core lifecycle and API contract;
@@ -94,6 +96,7 @@ print(serialize_program(program))
 - [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) — milestone plan;
 - [`docs/CODEX_TASKS.md`](docs/CODEX_TASKS.md) — ordered implementation queue;
 - [`docs/BENCHMARK_PROTOCOL.md`](docs/BENCHMARK_PROTOCOL.md) — experimental protocol;
+- [`docs/BENCHMARKING.md`](docs/BENCHMARKING.md) — harness usage, accounting rules and first deterministic observations;
 - [`docs/RELEASE_NOTES_V0_1_ALPHA_1.md`](docs/RELEASE_NOTES_V0_1_ALPHA_1.md) — release scope and known gaps.
 
 ## Design invariants
@@ -113,8 +116,8 @@ print(serialize_program(program))
 Implementation follows [`docs/CODEX_TASKS.md`](docs/CODEX_TASKS.md):
 
 1. AIR-Text lexer, parser and printer;
-2. offline `NL`/`JSON`/`SJSON`/`AIR` benchmark harness;
-3. deterministic benchmark scenarios and optional optimizations.
+2. provider-backed/tokenizer benchmark experiments;
+3. deterministic AIR+OPT experiments.
 
 Provider-backed LLMs, MCP/A2A adapters, production persistence, UI and irreversible real-world tools remain out of scope for the MVP foundation.
 

@@ -4,10 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "air-ir"
-version = "0.1.0a2"
+version = "0.1.0a3"
 description = "A small, verifiable Agent IR v0.1 research runtime"
 requires-python = ">=3.12"
 dependencies = []
+
+[project.scripts]
+air-bench = "air.bench.__main__:main"
 
 [project.optional-dependencies]
 dev = [
