@@ -17,3 +17,16 @@ dist/
 artifacts/
 .coverage
 htmlcov/
+
+# Internal AI instructions and architecture notes are kept locally, not in Git.
+/AGENTS.md
+/PROMPT_FOR_CODEX.md
+/docs/AIR_SPEC_V0_1.md
+/docs/ARCHITECTURE.md
+/docs/CODEX_PROMPTS.md
+/docs/CODEX_TASKS.md
+/docs/DECISIONS.md
+/docs/EXECUTABLE_CORE.md
+/docs/IMPLEMENTATION_PLAN.md
+/docs/REFERENCES.md
+/docs/SECURITY_AND_VERIFICATION.md

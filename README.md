@@ -90,36 +90,16 @@ print(serialize_program(program))
 - [`src/air/bench`](src/air/bench) — deterministic benchmark modes, scenarios, ledgers, metrics and reports;
 - [`src/air/projection`](src/air/projection) — operator projection from structured events;
 - [`tests`](tests) — model, security, state and end-to-end tests;
-- [`docs/EXECUTABLE_CORE.md`](docs/EXECUTABLE_CORE.md) — executable-core lifecycle and API contract;
-- [`docs/AIR_SPEC_V0_1.md`](docs/AIR_SPEC_V0_1.md) — normative model and operation specification;
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — component boundaries and lifecycle;
-- [`docs/SECURITY_AND_VERIFICATION.md`](docs/SECURITY_AND_VERIFICATION.md) — threat model and fail-closed rules;
-- [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) — milestone plan;
-- [`docs/CODEX_TASKS.md`](docs/CODEX_TASKS.md) — ordered implementation queue;
 - [`docs/BENCHMARK_PROTOCOL.md`](docs/BENCHMARK_PROTOCOL.md) — experimental protocol;
 - [`docs/BENCHMARKING.md`](docs/BENCHMARKING.md) — harness usage, accounting rules and first deterministic observations;
 - [`docs/LIVE_BENCHMARKING.md`](docs/LIVE_BENCHMARKING.md) — opt-in real-model Phase 2 usage and measurement limits;
 - [`docs/RELEASE_NOTES_V0_1_ALPHA_4.md`](docs/RELEASE_NOTES_V0_1_ALPHA_4.md) — current release scope and known gaps;
 - [`docs/RELEASE_NOTES_V0_1_ALPHA_1.md`](docs/RELEASE_NOTES_V0_1_ALPHA_1.md) — release scope and known gaps.
 
-## Design invariants
-
-- The canonical representation is a typed data model, not AIR-Text.
-- State and coordination messages remain separate.
-- Semantic objects are immutable; updates create new versions.
-- State writes go through validated patches and commits.
-- Unknown operations and effects fail closed.
-- Effects must be allowed by actor capabilities.
-- `ExternalUntrusted` cannot implicitly become `Verified`.
-- Deterministic code verifies and executes LLM proposals.
-- Operator text is a projection of structured events and state.
-
 ## Roadmap
 
-Implementation follows [`docs/CODEX_TASKS.md`](docs/CODEX_TASKS.md):
-
 1. AIR-Text lexer, parser and printer;
-2. provider-backed/tokenizer benchmark experiments;
+2. expanded provider/tokenizer benchmark experiments;
 3. deterministic AIR+OPT experiments.
 
 Provider-backed LLMs, MCP/A2A adapters, production persistence, UI and irreversible real-world tools remain out of scope for the MVP foundation.
