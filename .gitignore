@@ -1,0 +1,19 @@
+# Python caches and test/type-check artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local environments and packaging output
+.venv/
+venv/
+env/
+*.egg-info/
+build/
+dist/
+
+# Local benchmark/report artifacts
+artifacts/
+.coverage
+htmlcov/
